@@ -1,0 +1,38 @@
+.admin-container {
+  text-align: center;
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #333;
+}
+
+.add-user-btn, .logout-btn {
+  margin: 10px 0;
+}
+
+.data-grid {
+  height: 400px;
+  width: 100%;
+  background: white;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.MuiDialog-paper {
+  border-radius: 10px;
+}
+
+.MuiButton-containedPrimary {
+  background-color: #007bff;
+}
+
+.MuiButton-containedSecondary {
+  background-color: #dc3545;
+}

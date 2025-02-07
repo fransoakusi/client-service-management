@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify # type: ignore
-from app import mongo
+from backend.app.routes import mongo
 
 clients_bp = Blueprint('clients', __name__)
 

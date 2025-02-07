@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./components/Auth/Login";
+import Home from "./components/Admin/Home";
+import CreateUser from "./components/Admin/CreateUser";
+import Dashboard from "./components/User/Dashboard";
+import Profile from "./components/User/Profile";
 
-function App() {
+const App = () => {
+  const isAuthenticated = localStorage.getItem("isAuthenticated");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        {/* Login route */}
+        <Route path="/" element={<Login />} />
+
+        {/* Protected routes */}
+        {isAuthenticated ? (
+          <>
+            <Route path="/admin/home" element={<Home/>} />
+            <Route path="/admin/create-user" element={<CreateUser />} />
+            <Route path="/user/dashboard" element={<Dashboard />} />
+            <Route path="/user/profile" element={<Profile />} />
+          </>
+        ) : (
+          <Route path="*" element={<Navigate to="/" />} />
+        )}
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

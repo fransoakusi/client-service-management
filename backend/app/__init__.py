@@ -1,27 +1,30 @@
-from flask import Flask # type: ignore
-from flask_cors import CORS # type: ignore
-from flask_pymongo import PyMongo # type: ignore
+from flask import Flask
+from flask_pymongo import PyMongo
+from flask_bcrypt import Bcrypt
+from flask_cors import CORS  # Import CORS
 
-# MongoDB initialization
+# Initialize extensions
 mongo = PyMongo()
+bcrypt = Bcrypt()
 
 def create_app():
     app = Flask(__name__)
-    app.config["MONGO_URI"] = "mongodb://localhost:27017/client_management"
+
+    # Load configurations
+    app.config.from_object("app.config.Config")
+
+    # Initialize extensions
     mongo.init_app(app)
+    bcrypt.init_app(app)
     
-    # Enable CORS
-    CORS(app)
-    
-    # Register Blueprints
+    # Enable CORS for the entire app
+    CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
+    # Register blueprints
     from app.routes.auth import auth_bp
+    app.register_blueprint(auth_bp, url_prefix="/auth")
+
     from app.routes.admin import admin_bp
-    from app.routes.users import users_bp
-    from app.routes.clients import clients_bp
-    
-    app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(admin_bp, url_prefix='/admin')
-    app.register_blueprint(users_bp, url_prefix='/users')
-    app.register_blueprint(clients_bp, url_prefix='/clients')
-    
+    app.register_blueprint(admin_bp, url_prefix="/admin")
+
     return app

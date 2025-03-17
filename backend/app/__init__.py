@@ -26,5 +26,8 @@ def create_app():
 
     from app.routes.admin import admin_bp
     app.register_blueprint(admin_bp, url_prefix="/admin")
+    
+    from app.routes.clients import clients_bp
+    app.register_blueprint(clients_bp, url_prefix="/clients")
 
     return app

@@ -1,0 +1,125 @@
+.containerc {
+    width: 90%;
+    margin: auto;
+    font-family: Arial, sans-serif;
+  }
+  
+ 
+  header {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  nav button {
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+  }
+  
+  nav button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .form-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  
+  .textarea-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .textarea-group textarea {
+    height: 100px;
+  }
+  
+  .status-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .status-group div {
+    margin-left: 10px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .btn {
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  .btn.add {
+    background-color: #17a2b8;
+    color: white;
+  }
+  
+  .btn.add:hover {
+    background-color: #138496;
+  }
+  
+  .btn.save {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .btn.save:hover {
+    background-color: #218838;
+  }
+  
+  .btn.update {
+    background-color: #ffc107;
+    color: black;
+  }
+  
+  .btn.update:hover {
+    background-color: #e0a800;
+  }
+  
+  .btn.clear {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .btn.clear:hover {
+    background-color: #c82333;
+  }
+  

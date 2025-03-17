@@ -163,7 +163,14 @@ const Home = () => {
             <InputLabel>Role</InputLabel>
             <Select value={role} onChange={(e) => setRole(e.target.value)}>
               <MenuItem value="Admin">Admin</MenuItem>
-              <MenuItem value="User">User</MenuItem>
+              <MenuItem value="Receptionist">Receptionist</MenuItem>
+              <MenuItem value="Director">Director</MenuItem>
+              <MenuItem value="Social Welfare">Social Welfare</MenuItem>
+              <MenuItem value="Finance">Finance</MenuItem>
+              <MenuItem value="Works">Works</MenuItem>
+              <MenuItem value="Physical Planning">Physical Planning</MenuItem>
+              <MenuItem value="DCE">DCE</MenuItem>
+              <MenuItem value="Environmental Health">Environmental Health</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
@@ -172,9 +179,13 @@ const Home = () => {
           <Button onClick={handleAddUser} color="primary">Add</Button>
         </DialogActions>
       </Dialog>
-      
-      {/* Edit User Dialog */}
-      <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
+
+
+
+
+
+    {/* Edit User Dialog */}
+    <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
         <DialogTitle>Edit User Password</DialogTitle>
         <DialogContent>
           <TextField fullWidth margin="dense" type="password" label="New Password" value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -195,7 +206,7 @@ const Home = () => {
           <Button onClick={() => setDeleteOpen(false)} color="secondary">No</Button>
           <Button onClick={handleDeleteUser} color="error">Yes, Delete</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog>  
     </div>
   );
 };

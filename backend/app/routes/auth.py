@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
-from app.models.user import User
 from app import mongo, bcrypt
+import jwt
+import datetime
+from flask import current_app as app
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -29,9 +31,39 @@ def login():
         if user.get("role") != role:
             return jsonify({"message": "Role mismatch. Please select the correct role."}), 403
 
-        # Check if the user is an admin
-        is_admin = user.get("role") == "Admin"
+        # JWT token generation
+        token = jwt.encode(
+            {
+                "email": email,
+                "role": role,
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=12),
+            },
+            app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
 
-        return jsonify({"message": "Login successful", "is_admin": is_admin}), 200
+        # Define role-based redirects
+        role_redirects = {
+            "Receptionist": "/user/dashboard",
+            "Director": "/user/director",
+            "Social Welfare": "/user/social",
+            "Finance": "/user/finance",
+            "Works": "/user/works",
+            "Physical Planning": "/user/physical",
+            "DCE": "/user/dce",
+            "Environmental Health": "/user/environment",
+            "Admin": "/admin/home",
+        }
+
+        redirect_url = role_redirects.get(role, "/user/dashboard")
+        redirect_url = role_redirects.get(role, "/user/director")
+        return jsonify(
+            {
+                "message": "Login successful",
+                "token": token,
+                "role": role,
+                "redirect_url": redirect_url,
+            }
+        ), 200
     except Exception as e:
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500

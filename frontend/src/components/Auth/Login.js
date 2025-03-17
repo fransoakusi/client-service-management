@@ -7,7 +7,7 @@ import logo from "./../../assets/logo.png";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("User"); // Default role set to User
+  const [role, setRole] = useState("Receptionist"); // Default role
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -23,13 +23,23 @@ const Login = () => {
 
       const { token } = response.data;
       localStorage.setItem("token", token);
-      localStorage.setItem("userEmail", email); // Store email in localStorage
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userRole", role);
 
-      if (role === "Admin") {
-        navigate("/admin/home");
-      } else {
-        navigate("/user/dashboard");
-      }
+      // Redirect user based on role
+      const roleRoutes = {
+        Receptionist: "/user/dashboard",
+        Director: "/user/director",
+        "Social Welfare": "/user/social",
+        Finance: "user//finance",
+        Works: "user/works",
+        "Physical Planning": "/user/physical",
+        DCE: "/user/dce",
+        "Environmental Health": "/user/environment",
+        Admin: "/admin/home",
+      };
+
+      navigate(roleRoutes[role] || "/user/dashboard"); // Default to user dashboard
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Try again.");
     }
@@ -76,7 +86,14 @@ const Login = () => {
               className="login-input"
               required
             >
-              <option value="User">User</option>
+              <option value="Receptionist">Receptionist</option>
+              <option value="Director">Director</option>
+              <option value="Social Welfare">Social Welfare</option>
+              <option value="Finance">Finance</option>
+              <option value="Works">Works</option>
+              <option value="Physical Planning">Physical Planning</option>
+              <option value="DCE">DCE</option>
+              <option value="Environmental Health">Environmental Health</option>
               <option value="Admin">Admin</option>
             </select>
           </label>

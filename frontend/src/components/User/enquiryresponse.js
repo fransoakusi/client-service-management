@@ -10,56 +10,56 @@ import {
   FiSave, 
   FiEdit2, 
   FiTrash2,
-  FiClock,
   FiHome,
   FiAlertCircle,
   FiHelpCircle,
   FiShare2,
   FiCalendar
 } from "react-icons/fi";
-import "./visit.css";
+import "./enquiry.css";
 
-const VisitorManagement = () => {
+const Enquiry = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
-    visitId: `VIS${String(Math.floor(1000 + Math.random() * 9000))}`,
+    enquiryId: `ENQ${String(Math.floor(1000 + Math.random() * 9000))}`,
     name: "",
-    contact: "",
-    location: "",
+    age: "",
+    mode: "",
     gender: "",
-    officeDirected: "",
-    purpose: "",
-    date: new Date().toISOString().split('T')[0], // Default to current date
-    timeIn: "",
-    timeOut: "",
+    disability: "",
+    contact: "",
+    status: "Pending",
+    brief: "",
+    date: new Date().toISOString().split('T')[0], // Added date field
   });
 
-  const [visitors, setVisitors] = useState([]);
-  const [filteredVisitors, setFilteredVisitors] = useState([]);
-  const [selectedVisitorId, setSelectedVisitorId] = useState(null);
+  const [enquiries, setEnquiries] = useState([]);
+  const [filteredEnquiries, setFilteredEnquiries] = useState([]);
+  const [selectedEnquiryId, setSelectedEnquiryId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch visitors from backend
-  const fetchVisitors = async () => {
+  // Fetch enquiries from backend
+  const fetchEnquiries = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("http://127.0.0.1:5001/clients/get_visitors");
-      const visitorData = response.data.map((visitor, index) => ({
+      const response = await axios.get("http://127.0.0.1:5001/enquiry/get_enquiry");
+      const enquiryData = response.data.map((enquiry, index) => ({
         id: index + 1,
-        ...visitor,
+        ...enquiry,
+        date: enquiry.date || new Date().toISOString().split('T')[0] // Handle missing dates
       }));
-      setVisitors(visitorData);
-      setFilteredVisitors(visitorData);
+      setEnquiries(enquiryData);
+      setFilteredEnquiries(enquiryData);
     } catch (error) {
-      console.error("Error fetching visitors:", error);
+      console.error("Error fetching enquiries:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchVisitors();
+    fetchEnquiries();
   }, []);
 
   // Handle input changes
@@ -68,7 +68,7 @@ const VisitorManagement = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Save new visitor
+  // Save new enquiry
   const handleSave = async () => {
     if (!formData.name || !formData.contact) {
       alert("Please fill in required fields (Name and Contact)");
@@ -77,115 +77,83 @@ const VisitorManagement = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5001/clients/add_visitor", 
-        formData, 
+        "http://127.0.0.1:5001/enquiry/add_enquiry", 
+        {
+          ...formData,
+          date: formData.date || new Date().toISOString().split('T')[0] // Ensure date is always set
+        }, 
         { headers: { "Content-Type": "application/json" } }
       );
 
       if (response.status === 201) {
-        alert("Visitor saved successfully!");
-        fetchVisitors();
-        setFormData({
-          ...formData,
-          visitId: `VIS${String(Math.floor(1000 + Math.random() * 9000))}`,
-          name: "",
-          contact: "",
-          location: "",
-          gender: "",
-          officeDirected: "",
-          purpose: "",
-          date: new Date().toISOString().split('T')[0],
-          timeIn: "",
-          timeOut: "",
-        });
+        alert("Enquiry saved successfully!");
+        fetchEnquiries();
+        clearForm();
       }
     } catch (error) {
-      console.error("Error saving visitor:", error);
-      alert("Failed to save visitor. Please try again.");
+      console.error("Error saving enquiry:", error);
+      alert("Failed to save enquiry. Please try again.");
     }
   };
 
   // Handle row selection in DataGrid
   const handleRowSelection = (params) => {
-    const selectedVisitor = visitors.find((visitor) => visitor.id === params.id);
-    if (selectedVisitor) {
-      setSelectedVisitorId(selectedVisitor._id);
-      setFormData(selectedVisitor);
+    const selectedEnquiry = enquiries.find((enquiry) => enquiry.id === params.id);
+    if (selectedEnquiry) {
+      setSelectedEnquiryId(selectedEnquiry._id);
+      setFormData(selectedEnquiry);
     }
   };
 
-  // Update visitor information
+  // Update enquiry information
   const handleUpdate = async () => {
-    if (!selectedVisitorId) {
-      alert("Please select a visitor to update.");
+    if (!selectedEnquiryId) {
+      alert("Please select an enquiry to update.");
       return;
     }
 
     try {
       const response = await axios.put(
-        `http://127.0.0.1:5001/clients/update_visitor/${selectedVisitorId}`, 
-        formData, 
+        `http://127.0.0.1:5001/enquiry/update_enquiry/${selectedEnquiryId}`, 
+        {
+          ...formData,
+          date: formData.date || new Date().toISOString().split('T')[0] // Ensure date is always set
+        }, 
         { headers: { "Content-Type": "application/json" } }
       );
 
       if (response.status === 200) {
-        alert("Visitor updated successfully!");
-        fetchVisitors();
-        setFormData({
-          ...formData,
-          visitId: `VIS${String(Math.floor(1000 + Math.random() * 9000))}`,
-          name: "",
-          contact: "",
-          location: "",
-          gender: "",
-          officeDirected: "",
-          purpose: "",
-          date: new Date().toISOString().split('T')[0],
-          timeIn: "",
-          timeOut: "",
-        });
-        setSelectedVisitorId(null);
+        alert("Enquiry updated successfully!");
+        fetchEnquiries();
+        clearForm();
       }
     } catch (error) {
-      console.error("Error updating visitor:", error);
-      alert("Failed to update visitor. Please try again.");
+      console.error("Error updating enquiry:", error);
+      alert("Failed to update enquiry. Please try again.");
     }
   };
 
-  // Delete visitor
+  // Delete enquiry
   const handleDelete = async () => {
-    if (!selectedVisitorId) {
-      alert("Please select a visitor to delete.");
+    if (!selectedEnquiryId) {
+      alert("Please select an enquiry to delete.");
       return;
     }
 
-    if (window.confirm("Are you sure you want to delete this visitor record?")) {
+    if (window.confirm("Are you sure you want to delete this enquiry record?")) {
       try {
         const response = await axios.delete(
-          `http://127.0.0.1:5001/clients/delete_visitor/${selectedVisitorId}`
+          `http://127.0.0.1:5001/enquiry/delete_enquiry/${selectedEnquiryId}`
         );
 
         if (response.status === 200) {
-          alert("Visitor deleted successfully!");
-          fetchVisitors();
-          setFormData({
-            ...formData,
-            visitId: `VIS${String(Math.floor(1000 + Math.random() * 9000))}`,
-            name: "",
-            contact: "",
-            location: "",
-            gender: "",
-            officeDirected: "",
-            purpose: "",
-            date: new Date().toISOString().split('T')[0],
-            timeIn: "",
-            timeOut: "",
-          });
-          setSelectedVisitorId(null);
+          alert("Enquiry deleted successfully!");
+          fetchEnquiries();
+          clearForm();
         }
       } catch (error) {
-        console.error("Error deleting visitor:", error);
-        alert("Failed to delete visitor. Please try again.");
+        console.error("Error deleting enquiry:", error);
+        alert("Failed to delete enquiry. Please try again.");
       }
     }
   };
@@ -193,18 +161,18 @@ const VisitorManagement = () => {
   // Clear form fields
   const clearForm = () => {
     setFormData({
-      visitId: `VIS${String(Math.floor(1000 + Math.random() * 9000))}`,
+      enquiryId: `ENQ${String(Math.floor(1000 + Math.random() * 9000))}`,
       name: "",
-      contact: "",
-      location: "",
+      age: "",
+      mode: "",
       gender: "",
-      officeDirected: "",
-      purpose: "",
-      date: new Date().toISOString().split('T')[0],
-      timeIn: "",
-      timeOut: "",
+      disability: "",
+      contact: "",
+      status: "Pending",
+      brief: "",
+      date: new Date().toISOString().split('T')[0] // Reset date to current date
     });
-    setSelectedVisitorId(null);
+    setSelectedEnquiryId(null);
   };
 
   // Handle search
@@ -212,62 +180,51 @@ const VisitorManagement = () => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
 
-    const filtered = visitors.filter(
-      (visitor) =>
-        visitor.visitId.toLowerCase().includes(term) ||
-        visitor.name.toLowerCase().includes(term) ||
-        visitor.contact.toLowerCase().includes(term) ||
-        (visitor.date && visitor.date.toLowerCase().includes(term))
+    const filtered = enquiries.filter(
+      (enquiry) =>
+        enquiry.enquiryId.toLowerCase().includes(term) ||
+        enquiry.name.toLowerCase().includes(term) ||
+        enquiry.contact.toLowerCase().includes(term) ||
+        enquiry.status.toLowerCase().includes(term) ||
+        (enquiry.date && enquiry.date.toLowerCase().includes(term)) // Include date in search
     );
-    setFilteredVisitors(filtered);
+    setFilteredEnquiries(filtered);
   };
 
   // Table columns for DataGrid
   const columns = [
     { field: "id", headerName: "#", width: 60, headerClassName: "grid-header" },
-    { field: "visitId", headerName: "VISIT ID", width: 120, headerClassName: "grid-header" },
-    { field: "name", headerName: "CLIENT NAME", width: 180, headerClassName: "grid-header" },
-    { field: "contact", headerName: "CONTACT", width: 140, headerClassName: "grid-header" },
-    { field: "location", headerName: "LOCATION", width: 140, headerClassName: "grid-header" },
+    { field: "enquiryId", headerName: "ENQUIRY ID", width: 130, headerClassName: "grid-header" },
+    { field: "name", headerName: "NAME", width: 150, headerClassName: "grid-header" },
+    { field: "age", headerName: "AGE", width: 100, headerClassName: "grid-header" },
+    { field: "mode", headerName: "MODE OF ENQUIRY", width: 180, headerClassName: "grid-header" },
     { field: "gender", headerName: "GENDER", width: 100, headerClassName: "grid-header" },
-    { field: "officeDirected", headerName: "OFFICE", width: 180, headerClassName: "grid-header" },
-    { field: "purpose", headerName: "PURPOSE", width: 220, headerClassName: "grid-header" },
+    { field: "disability", headerName: "DISABILITY", width: 120, headerClassName: "grid-header" },
+    { field: "contact", headerName: "CONTACT", width: 150, headerClassName: "grid-header" },
+    { 
+      field: "status", 
+      headerName: "STATUS", 
+      width: 120, 
+      headerClassName: "grid-header",
+      renderCell: (params) => (
+        <div className={`status-cell ${params.value.toLowerCase()}`}>
+          {params.value}
+        </div>
+      )
+    },
     { 
       field: "date", 
       headerName: "DATE", 
       width: 120, 
       headerClassName: "grid-header",
       renderCell: (params) => (
-        <div className="time-cell">
-          <FiCalendar className="time-icon" />
+        <div className="date-cell">
+          <FiCalendar className="date-icon" />
           {params.value}
         </div>
       )
     },
-    { 
-      field: "timeIn", 
-      headerName: "TIME IN", 
-      width: 120, 
-      headerClassName: "grid-header",
-      renderCell: (params) => (
-        <div className="time-cell">
-          <FiClock className="time-icon" />
-          {params.value}
-        </div>
-      )
-    },
-    { 
-      field: "timeOut", 
-      headerName: "TIME OUT", 
-      width: 120, 
-      headerClassName: "grid-header",
-      renderCell: (params) => (
-        <div className="time-cell">
-          <FiClock className="time-icon" />
-          {params.value || "-"}
-        </div>
-      )
-    },
+    { field: "brief", headerName: "BRIEF OF ENQUIRY", width: 200, headerClassName: "grid-header" },
   ];
 
   const toggleMenu = () => {
@@ -275,7 +232,7 @@ const VisitorManagement = () => {
   };
 
   return (
-    <div className="visitor-management-container">
+    <div className="enquiry-management-container">
       <div className={`sidebar ${isMenuOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <h2>North Tongu</h2>
@@ -289,7 +246,7 @@ const VisitorManagement = () => {
                 <span>Dashboard</span>
               </Link>
             </li>
-            <li className="active">
+            <li>
               <Link to="/user/visit" className="nav-link">
                 <FiUserPlus className="nav-icon" />
                 <span>Visitors</span>
@@ -301,7 +258,7 @@ const VisitorManagement = () => {
                 <span>Complaints</span>
               </Link>
             </li>
-            <li>
+            <li className="active">
               <Link to="/user/enquiry" className="nav-link">
                 <FiHelpCircle className="nav-icon" />
                 <span>Enquiries</span>
@@ -337,13 +294,13 @@ const VisitorManagement = () => {
           <button className="menu-toggle" onClick={toggleMenu}>
             {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-          <h1>Visitors Form</h1>
+          <h1>Enquiry Response Form</h1>
           <div className="header-actions">
             <div className="search-box">
               <FiSearch className="search-icon" />
               <input
                 type="text"
-                placeholder="Search visitors..."
+                placeholder="Search enquiries..."
                 value={searchTerm}
                 onChange={handleSearch}
               />
@@ -354,31 +311,29 @@ const VisitorManagement = () => {
         <div className="content-wrapper">
           <div className="card form-card">
             <div className="card-header">
-              <h2>Visitors</h2>
+              <h2>Enquiry Response</h2>
               <div className="card-actions">
-                <span className={`status-indicator ${selectedVisitorId ? "edit-mode" : "add-mode"}`}>
-                  {selectedVisitorId ? "Edit Mode" : "Add Mode"}
+                <span className={`status-indicator ${selectedEnquiryId ? "edit-mode" : "add-mode"}`}>
+                  {selectedEnquiryId ? "Edit Mode" : "Add Mode"}
                 </span>
               </div>
             </div>
             <div className="card-body">
               <div className="form-grid">
                 <div className="form-group">
-                  <label>Visit ID</label>
-                  <div className="input-with-icon">
-                    <input
-                      type="text"
-                      name="visitId"
-                      value={formData.visitId}
-                      onChange={handleChange}
-                      className="input-field"
-                      readOnly
-                    />
-                  </div>
+                  <label>Enquiry ID</label>
+                  <input
+                    type="text"
+                    name="enquiryId"
+                    value={formData.enquiryId}
+                    onChange={handleChange}
+                    className="input-field"
+                    readOnly
+                  />
                 </div>
 
                 <div className="form-group">
-                  <label>Name of Client <span className="required">*</span></label>
+                  <label>Name of Enquirer <span className="required">*</span></label>
                   <input
                     type="text"
                     name="name"
@@ -386,31 +341,56 @@ const VisitorManagement = () => {
                     onChange={handleChange}
                     className="input-field"
                     placeholder="Enter full name"
+                    disabled
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>Contact Details <span className="required">*</span></label>
-                  <input
-                    type="text"
-                    name="contact"
-                    value={formData.contact}
-                    onChange={handleChange}
-                    className="input-field"
-                    placeholder="Phone number"
-                  />
+                  <label>Date of Enquiry</label>
+                  <div className="input-with-icon">
+                    <FiCalendar className="input-icon" />
+                    <input
+                      type="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleChange}
+                      className="input-field"
+                      disabled
+                    />
+                  </div>
                 </div>
 
                 <div className="form-group">
-                  <label>Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
+                  <label>Age Bracket</label>
+                  <select
+                    name="age"
+                    value={formData.age}
                     onChange={handleChange}
                     className="input-field"
-                    placeholder="Residential address"
-                  />
+                    disabled
+                  >
+                    <option value="">Select Age</option>
+                    <option value="18 to 35">18 to 35</option>
+                    <option value="36 to 60">36 to 60</option>
+                    <option value="60 to 80">60 to 80</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Mode of Enquiry</label>
+                  <select
+                    name="mode"
+                    value={formData.mode}
+                    onChange={handleChange}
+                    className="input-field"
+                    disabled
+                  >
+                    <option value="">Select Mode</option>
+                    <option value="Walk In">Walk In</option>
+                    <option value="On Phone">On Phone</option>
+                    <option value="Email">Email</option>
+                    <option value="Online">Online</option>
+                  </select>
                 </div>
 
                 <div className="form-group">
@@ -420,6 +400,7 @@ const VisitorManagement = () => {
                     value={formData.gender}
                     onChange={handleChange}
                     className="input-field"
+                    disabled
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -429,82 +410,82 @@ const VisitorManagement = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Date of Visit</label>
-                  <div className="input-with-icon">
-                    <FiCalendar className="input-icon" />
-                    <input
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleChange}
-                      className="input-field"
-                    />
-                  </div>
+                  <label>Disability?</label>
+                  <select
+                    name="disability"
+                    value={formData.disability}
+                    onChange={handleChange}
+                    className="input-field"
+                    disabled
+                  >
+                    <option value="">Select Option</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
                 </div>
 
                 <div className="form-group">
-                  <label>Office Directed To</label>
+                  <label>Enquirer Contact <span className="required">*</span></label>
                   <input
                     type="text"
-                    name="officeDirected"
-                    value={formData.officeDirected}
+                    name="contact"
+                    value={formData.contact}
                     onChange={handleChange}
                     className="input-field"
-                    placeholder="Department/Office"
+                    placeholder="Phone number"
+                    disabled
                   />
+                </div>
+
+                <div className="form-group">
+                  <label>Status</label>
+                  <div className="radio-group">
+                    <label>
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Pending"
+                        checked={formData.status === "Pending"}
+                        onChange={handleChange}
+                      />
+                      Pending
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Responded"
+                        checked={formData.status === "Responded"}
+                        onChange={handleChange}
+                      />
+                      Responded
+                    </label>
+                  </div>
                 </div>
 
                 <div className="form-group span-2">
-                  <label>Purpose of Visit</label>
+                  <label>Brief of Enquiry</label>
                   <textarea
-                    name="purpose"
-                    value={formData.purpose}
+                    name="brief"
+                    value={formData.brief}
                     onChange={handleChange}
                     className="input-field"
                     rows="3"
-                    placeholder="Brief description of visit purpose"
+                    placeholder="Brief description of the enquiry"
                   />
-                </div>
-
-                <div className="form-group">
-                  <label>Time In</label>
-                  <div className="input-with-icon">
-                    <FiClock className="input-icon" />
-                    <input
-                      type="time"
-                      name="timeIn"
-                      value={formData.timeIn}
-                      onChange={handleChange}
-                      className="input-field"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Time Out</label>
-                  <div className="input-with-icon">
-                    <FiClock className="input-icon" />
-                    <input
-                      type="time"
-                      name="timeOut"
-                      value={formData.timeOut}
-                      onChange={handleChange}
-                      className="input-field"
-                    />
-                  </div>
                 </div>
               </div>
 
               <div className="form-actions">
                 <button className="btn btn-primary" onClick={handleSave}>
                   <FiSave className="btn-icon" />
-                  Save Visitor
+                  Save Enquiry
                 </button>
-                <button className="btn btn-secondary" onClick={handleUpdate} disabled={!selectedVisitorId}>
+                <button className="btn btn-secondary" onClick={handleUpdate} disabled={!selectedEnquiryId}>
                   <FiEdit2 className="btn-icon" />
                   Update
                 </button>
-                <button className="btn btn-danger" onClick={handleDelete} disabled={!selectedVisitorId}>
+                <button className="btn btn-danger" onClick={handleDelete} disabled={!selectedEnquiryId}>
                   <FiTrash2 className="btn-icon" />
                   Delete
                 </button>
@@ -517,15 +498,15 @@ const VisitorManagement = () => {
 
           <div className="card table-card">
             <div className="card-header">
-              <h2>Visitor Records</h2>
+              <h2>Enquiry Records</h2>
               <div className="card-actions">
-                <span className="record-count">{filteredVisitors.length} records</span>
+                <span className="record-count">{filteredEnquiries.length} records</span>
               </div>
             </div>
             <div className="card-body">
               <div className="data-grid-container">
                 <DataGrid
-                  rows={filteredVisitors}
+                  rows={filteredEnquiries}
                   columns={columns}
                   pageSize={10}
                   rowsPerPageOptions={[5, 10, 20]}
@@ -545,7 +526,7 @@ const VisitorManagement = () => {
                     },
                   }}
                   getRowClassName={(params) => 
-                    params.id === selectedVisitorId ? "selected-row" : ""
+                    params.id === selectedEnquiryId ? "selected-row" : ""
                   }
                 />
               </div>
@@ -557,4 +538,4 @@ const VisitorManagement = () => {
   );
 };
 
-export default VisitorManagement;
+export default Enquiry;

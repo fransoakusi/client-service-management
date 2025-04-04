@@ -14,7 +14,9 @@ import Works from "./components/User/Works";
 import Profile from "./components/User/Profile";
 import Complaint from "./components/User/complaints";
 import Visit from "./components/User/visit";
-import Enquiry from "./components/other/enquiry";
+import Enquiry from "./components/User/enquiry";
+import EnquiryResponse from "./components/User/enquiryresponse";
+import Referral from "./components/User/referral";
 const App = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated");
 
@@ -50,6 +52,8 @@ const App = () => {
         <Route path="/user/complaints" element={<Complaint/>} />
         <Route path="/user/visit" element={<Visit/>} />
         <Route path="/user/enquiry" element={<Enquiry/>} />
+        <Route path="/user/enquiryresponse" element={<EnquiryResponse/>} />
+        <Route path="/user/referral" element={<Referral/>} />
       </Routes>
       
     </Router>

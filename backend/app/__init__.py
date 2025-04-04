@@ -30,4 +30,17 @@ def create_app():
     from app.routes.clients import clients_bp
     app.register_blueprint(clients_bp, url_prefix="/clients")
 
+    from app.routes.complaints import complaints_bp
+    app.register_blueprint(complaints_bp, url_prefix="/complaints")
+
+    from app.routes.enquiry import enquiry_bp
+    app.register_blueprint(enquiry_bp, url_prefix="/enquiry")
+    
+    from app.routes.response import response_bp
+    app.register_blueprint(response_bp, url_prefix="/response")
+
+
+    from app.routes.referral import referral_bp
+    app.register_blueprint(referral_bp, url_prefix="/referral")
+
     return app

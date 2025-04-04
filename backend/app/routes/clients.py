@@ -25,6 +25,7 @@ def add_visitor():
         "gender": data.get("gender"),
         "officeDirected": data.get("officeDirected"),
         "purpose": data.get("purpose"),
+        "date": data.get("date"),
         "timeIn": data.get("timeIn"),
         "timeOut": data.get("timeOut"),
     }
@@ -49,6 +50,7 @@ def get_visitors():
             "gender": visitor["gender"],
             "officeDirected": visitor["officeDirected"],
             "purpose": visitor["purpose"],
+             "date": visitor["date"],
             "timeIn": visitor["timeIn"],
             "timeOut": visitor["timeOut"],
         })
@@ -73,6 +75,7 @@ def update_visitor(visitor_id):
                 "gender": data.get("gender"),
                 "officeDirected": data.get("officeDirected"),
                 "purpose": data.get("purpose"),
+                "date": data.get("date"),
                 "timeIn": data.get("timeIn"),
                 "timeOut": data.get("timeOut"),
             }}
@@ -84,3 +87,16 @@ def update_visitor(visitor_id):
         return jsonify({"message": "Visitor updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": f"Update failed: {str(e)}"}), 500
+
+# delete visitor data
+@clients_bp.route("/delete_visitor/<visitor_id>", methods=["DELETE"])
+def delete_visitor(visitor_id):
+    try:
+        result = mongo.db.clients.delete_one({"_id": ObjectId(visitor_id)})
+
+        if result.deleted_count == 0:
+            return jsonify({"error": "Visitor not found"}), 404
+
+        return jsonify({"message": "Visitor deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Deletion failed: {str(e)}"}), 500
